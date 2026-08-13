@@ -30,7 +30,7 @@ jobs:
     
     - run: go test
       working-directory: ./frontend
-#04testing task
+#04testing task 
   test:
     needs: build
     runs-on: ubuntu-latest
@@ -41,9 +41,15 @@ jobs:
       # Use 'docker compose' (not docker-compose) - it's built-in
       run: docker compose up -d
     
+    - name: Wait for services
+      # Give services time to start
+      run: sleep 10
+    
     - name: Run tests
+      # Test frontend and backend endpoints
       run: bash test.sh
-      continue-on-error: true
+      # REMOVED continue-on-error - if tests fail, PR fails
+      # This ensures code quality before merging to main
 
   push:
     needs: build
