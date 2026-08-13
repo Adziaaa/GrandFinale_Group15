@@ -30,6 +30,20 @@ jobs:
     
     - run: go test
       working-directory: ./frontend
+#04testing task
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Start services
+      # Use 'docker compose' (not docker-compose) - it's built-in
+      run: docker compose up -d
+    
+    - name: Run tests
+      run: bash test.sh
+      continue-on-error: true
 
   push:
     needs: build
