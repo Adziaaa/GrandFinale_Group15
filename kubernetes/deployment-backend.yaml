@@ -14,9 +14,11 @@ spec:
    labels:
     app: backend
   spec:
+    imagePullSecrets:
+     - name: ghcr-secret      
     containers:
      - name: backend
-       image: ghcr.io/eficode-academy/cat-serve:main
+       image: ghcr.io/salar778/backend:latest
        ports:
-        - containerPort = 9000
+        - containerPort: 9000
 
