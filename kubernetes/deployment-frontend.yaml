@@ -14,8 +14,10 @@ spec:
    labels:
     app: frontend
   spec:
+    imagePullSecrets:
+     - name: ghcr-secret      
     containers:
      - name: frontend
-       image: ghcr.io/eficode-academy/cat-serve:main
+       image: ghcr.io/salar778/frontend:latest
        ports:
-        - containerPort = 8080
+        - containerPort: 8080
