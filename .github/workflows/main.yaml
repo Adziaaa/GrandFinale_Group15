@@ -86,17 +86,15 @@ jobs:
 
   # deploy to Kubernetes cluster
 
-  
-  deploy:
-    needs: [build, test, push]
-    runs-on: ubuntu-latest
-    # only deploy live when code is on main
-    if: github.ref == 'refs/heads/main'
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Deploy to Kubernetes
-      env:
-        # pass the kubeconfig so we can deploy to the cluster
-        KUBECONFIG_B64: ${{ secrets.KUBECONFIG }}
-      run: bash deploy.sh
+deploy:
+  needs: [build, test, push]
+  runs-on: ubuntu-latest
+  environment: production
+  if: github.ref == 'refs/heads/main'
+  steps:
+  - uses: actions/checkout@v3
+
+  - name: Deploy to Kubernetes
+    env:
+      KUBECONFIG_B64: ${{ secrets.KUBECONFIG }}
+    run: bash deploy.sh
