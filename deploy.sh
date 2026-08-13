@@ -16,7 +16,7 @@ echo "Deploying backend..."
 kubectl --kubeconfig kubeconfig apply -f kubernetes/deployment-backend.yaml
 kubectl --kubeconfig kubeconfig apply -f kubernetes/service-backend.yaml
 
-echo "Deployment complete!"
+echo "done"
 
 # Clean up kubeconfig
 rm kubeconfig
