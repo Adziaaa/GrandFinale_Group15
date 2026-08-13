@@ -38,7 +38,8 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Start services
-      run: docker-compose up -d
+      # Use 'docker compose' (not docker-compose) - it's built-in
+      run: docker compose up -d
     
     - name: Run tests
       run: bash test.sh
