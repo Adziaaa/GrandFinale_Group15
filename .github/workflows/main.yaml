@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-      # Get the code from the repository
+      # grab the code from the repo
     
     - uses: actions/setup-go@v4
-      # Install Go to build and test
+      # set up Go to build and test 
       with:
         go-version: '1.16'
     
@@ -42,14 +42,13 @@ jobs:
       run: docker compose up -d
     
     - name: Wait for services
-      # Give services time to start
+      # let the services boot up for a sec
       run: sleep 10
     
     - name: Run tests
-      # Test frontend and backend endpoints
+      # test all the endpoints
       run: bash test.sh
-      # REMOVED continue-on-error - if tests fail, PR fails
-      # This ensures code quality before merging to main
+      # tests gotta pass or the PR gets blocked - no bad code on main
 
   push:
     needs: build
@@ -57,7 +56,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    # only push when we merge to main
+    # only upload to registry when code hits main
     if: github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v3
@@ -67,14 +66,14 @@ jobs:
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ env.OWNER }}
-        # using github token for auth
+        # log in with GitHub token
         password: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Build and push frontend
       uses: docker/build-push-action@v4
       with:
         context: ./frontend
-        # actually push it to the registry
+        # upload the image to the container registry
         push: true
         tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/frontend:latest
     
@@ -84,3 +83,20 @@ jobs:
         context: ./backend
         push: true
         tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/backend:latest
+
+  # deploy to Kubernetes cluster
+
+  
+  deploy:
+    needs: [build, test, push]
+    runs-on: ubuntu-latest
+    # only deploy live when code is on main
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to Kubernetes
+      env:
+        # pass the kubeconfig so we can deploy to the cluster
+        KUBECONFIG_B64: ${{ secrets.KUBECONFIG }}
+      run: bash deploy.sh
