@@ -1,15 +1,21 @@
-FROM golang:1.16
+# Build stage
+FROM golang:1.21 AS builder
 
 WORKDIR /app
 
-# copy dependencies first
-COPY go.mod .
-COPY go.sum .
-# copy source code
+COPY go.mod go.sum ./
+RUN go mod download
+
 COPY . .
 
-# build it
-RUN go build -o backend
+RUN CGO_ENABLED=0 GOOS=linux go build -o backend .
+
+# Runtime stage
+FROM alpine:3.20
+
+WORKDIR /app
+
+COPY --from=builder /app/backend .
 
 EXPOSE 9000
 

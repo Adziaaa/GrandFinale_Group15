@@ -1,15 +1,27 @@
-FROM golang:1.16
+# Build stage
+FROM golang:1.21 AS builder
 
 WORKDIR /app
 
-# copy the go.mod file first
-COPY go.mod .
-# then copy everything else
+COPY go.mod ./
+RUN go mod download
+
 COPY . .
 
-# build the application
-RUN go build -o frontend
+RUN CGO_ENABLED=0 GOOS=linux go build -o frontend .
+
+# Runtime stage
+FROM alpine:3.20
+
+WORKDIR /app
+
+COPY --from=builder /app/frontend .
+COPY static ./static
+COPY templates ./templates
 
 EXPOSE 8080
+
+ENV BACKEND_DNS=backend
+ENV BACKEND_PORT=9000
 
 CMD ["./frontend"]
