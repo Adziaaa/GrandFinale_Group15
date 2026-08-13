@@ -3,8 +3,7 @@
 echo "Testing application..."
 
 # delay the job a bit
- wait for services to start
-forsleep 5
+sleep 5
 
 # Test frontend
 echo "Testing frontend..."
