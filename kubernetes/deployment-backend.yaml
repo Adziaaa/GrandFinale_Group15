@@ -21,4 +21,7 @@ spec:
        image: ghcr.io/salar778/backend:latest
        ports:
         - containerPort: 9000
+       env:
+        - name: REDIS_DNS
+          value: "redis"
 
