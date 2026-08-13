@@ -1,0 +1,3 @@
+###description
+- `backend`: a Go server that serves api requests
+- `frontend`: an HTTP webserver (in Go) that you can view in your browser
