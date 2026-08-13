@@ -1,0 +1,66 @@
+name: pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  OWNER: ${{ github.repository_owner }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      # Get the code from the repository
+    
+    - uses: actions/setup-go@v4
+      # Install Go to build and test
+      with:
+        go-version: '1.16'
+    
+    - run: go build
+      working-directory: ./frontend
+    
+    - run: go build
+      working-directory: ./backend
+    
+    - run: go test
+      working-directory: ./frontend
+
+  push:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    # only push when we merge to main
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Login to registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ env.OWNER }}
+        # using github token for auth
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Build and push frontend
+      uses: docker/build-push-action@v4
+      with:
+        context: ./frontend
+        # actually push it to the registry
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/frontend:latest
+    
+    - name: Build and push backend
+      uses: docker/build-push-action@v4
+      with:
+        context: ./backend
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/backend:latest
