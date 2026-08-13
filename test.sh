@@ -2,6 +2,7 @@
 
 echo "Testing application..."
 
+# delay the job a bit
 # Give the containers time to start
 sleep 5
 
