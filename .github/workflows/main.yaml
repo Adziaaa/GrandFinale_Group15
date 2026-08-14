@@ -8,7 +8,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  OWNER: ${{ github.repository_owner }}
 
 jobs:
   build:
@@ -21,7 +20,7 @@ jobs:
       # set up Go to build and test 
       with:
         go-version: '1.16'
-    
+  
     - run: go build
       working-directory: ./frontend
     
@@ -51,7 +50,7 @@ jobs:
       # tests gotta pass or the PR gets blocked - no bad code on main
 
   push:
-    needs: build
+    needs: [build, test]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -60,12 +59,15 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v3
-    
+
+    - name: Convert owner to lowercase
+      run: echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+
     - name: Login to registry
       uses: docker/login-action@v2
       with:
         registry: ${{ env.REGISTRY }}
-        username: ${{ env.OWNER }}
+        username: ${{ github.actor }}
         # log in with GitHub token
         password: ${{ secrets.GITHUB_TOKEN }}
     
@@ -75,14 +77,14 @@ jobs:
         context: ./frontend
         # upload the image to the container registry
         push: true
-        tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/frontend:latest
+        tags: ${{ env.REGISTRY }}/${{ env.OWNER_LC }}/frontend:latest
     
     - name: Build and push backend
       uses: docker/build-push-action@v4
       with:
         context: ./backend
         push: true
-        tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/backend:latest
+        tags: ${{ env.REGISTRY }}/${{ env.OWNER_LC }}/backend:latest
 
   # deploy to Kubernetes cluster
 
