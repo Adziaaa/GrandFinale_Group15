@@ -17,7 +17,7 @@ fi
 
 # Test backend
 echo "Testing backend..."
-if curl -f http://localhost:9000/fortunes/random; then
+if curl -f http://localhost:9000/fortunes; then
   echo "Backend working"
 else
   echo "Backend failed"
