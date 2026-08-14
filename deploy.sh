@@ -6,6 +6,18 @@ echo "Deploying to Kubernetes..."
 # Create kubeconfig file from secret (passed as env variable)
 echo "$KUBECONFIG_B64" | base64 -d > kubeconfig
 
+echo "Kubernetes context:"
+kubectl --kubeconfig kubeconfig config current-context
+
+NAMESPACE=$(kubectl --kubeconfig kubeconfig config view --minify \
+  --output 'jsonpath={..namespace}')
+
+if [ -z "$NAMESPACE" ]; then
+  NAMESPACE="default"
+fi
+
+echo "Kubernetes namespace: $NAMESPACE"
+
 # Apply frontend deployment
 echo "Deploying frontend..."
 kubectl --kubeconfig kubeconfig apply -f kubernetes/deployment-frontend.yaml
@@ -15,6 +27,9 @@ kubectl --kubeconfig kubeconfig apply -f kubernetes/service-frontend.yaml
 echo "Deploying backend..."
 kubectl --kubeconfig kubeconfig apply -f kubernetes/deployment-backend.yaml
 kubectl --kubeconfig kubeconfig apply -f kubernetes/service-backend.yaml
+
+kubectl --kubeconfig kubeconfig get pods -n "$NAMESPACE"
+kubectl --kubeconfig kubeconfig get svc -n "$NAMESPACE"
 
 echo "done"
 
