@@ -18,7 +18,7 @@ spec:
      - name: ghcr-secret      
     containers:
      - name: backend
-       image: ghcr.io/salar778/backend:latest
+       image: ghcr.io/adziaaa/backend:latest
        ports:
         - containerPort: 9000
        env:
