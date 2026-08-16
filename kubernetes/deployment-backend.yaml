@@ -23,5 +23,8 @@ spec:
         - containerPort: 9000
        env:
         - name: REDIS_DNS
-          value: "redis"
+          valueFrom: 
+            configMapKeyRef:
+             name: app-config
+             key: REDIS_DNS 
 
