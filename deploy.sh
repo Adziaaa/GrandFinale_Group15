@@ -19,10 +19,10 @@ fi
 echo "Kubernetes namespace: $NAMESPACE"
 
 #Apply Database
-kubectl --kubeconfig kubeconfig apply -f kubernetes/configmap.yaml
-kubectl --kubeconfig kubeconfig apply -f kubernetes/persistant-volume.yaml
-kubectl --kubeconfig kubeconfig apply -f kubernetes/deployment-redis.yaml
-kubectl --kubeconfig kubeconfig apply -f kubernetes/service-redis.yaml
+#kubectl --kubeconfig kubeconfig apply -f kubernetes/configmap.yaml
+#kubectl --kubeconfig kubeconfig apply -f kubernetes/persistant-volume.yaml
+#kubectl --kubeconfig kubeconfig apply -f kubernetes/deployment-redis.yaml
+#kubectl --kubeconfig kubeconfig apply -f kubernetes/service-redis.yaml
 
 # Apply backend deployment
 echo "Deploying backend..."
