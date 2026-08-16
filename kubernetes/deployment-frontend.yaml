@@ -1,23 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
- name: frontend
- labels:
-   app: frontend
+  name: frontend
+
 spec:
- replicas: 1
- selector:
-  matchLabels: 
-   app: frontend
- template:
-  metadata:
-   labels:
-    app: frontend
-  spec:
-    imagePullSecrets:
-     - name: ghcr-secret      
-    containers:
-     - name: frontend
-       image: ghcr.io/adziaaa/frontend:latest
-       ports:
-        - containerPort: 8080
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: frontend
+
+  template:
+    metadata:
+      labels:
+        app: frontend
+
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/adziaaa/frontend:latest
+
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: BACKEND_DNS
+              valueFrom:
+               configMapKeyRef:
+                name: app-config
+                key: "BACKEND_DNS"
+
+            - name: BACKEND_PORT
+              valueFrom:
+               configMapKeyRef:
+                name: app-config
+                key: "BACKEND_PORT" 
